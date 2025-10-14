@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://bbcw7e4pu05ch"]
+
+[ext_resource type="Script" uid="uid://dm0x3r1n0cfug" path="res://MainArea/Scripts/space_ship.gd" id="1_aaufb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4yfhc"]
+size = Vector3(3, 3, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aaufb"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_naoou"]
+material = SubResource("StandardMaterial3D_aaufb")
+size = Vector3(3, 3, 3)
+
+[node name="Space" type="Node3D"]
+
+[node name="SpaceShip" type="Node3D" parent="."]
+script = ExtResource("1_aaufb")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="SpaceShip"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpaceShip/CharacterBody3D"]
+shape = SubResource("BoxShape3D_4yfhc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpaceShip/CharacterBody3D"]
+mesh = SubResource("BoxMesh_naoou")
+
+[node name="Camera3D" type="Camera3D" parent="SpaceShip/CharacterBody3D"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 2, 0, 0)
+
+[node name="Speedometer" type="Label" parent="SpaceShip/CharacterBody3D/Camera3D"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Speed: 0"
+
+[node name="Position" type="Label" parent="SpaceShip/CharacterBody3D/Camera3D"]
+offset_top = 23.0
+offset_right = 78.0
+offset_bottom = 46.0
+text = "X:0 Y:0 Z:0"
+
+[node name="Rotation" type="Label" parent="SpaceShip/CharacterBody3D/Camera3D"]
+offset_top = 46.0
+offset_right = 112.0
+offset_bottom = 69.0
+text = "Rot X:0 Rot Y:0"
