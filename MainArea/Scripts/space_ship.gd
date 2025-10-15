@@ -13,7 +13,7 @@ var target_roll_velocity = 0
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void: #called on input events(key press, mouse movement, that type of stuff)
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED: #Had to get an online explanation to local rotation
 		#TODO: Make this more space-like. Rather than setting motion, add rotation velocity while mouse is motion.
 		rotate_object_local(Vector3.UP, -event.relative.x * mouse_sensitivity) #Yaw control
@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 		update_velocity_feed()
 	
 	
-	#Roll control, TODO: also make momentum based, see mouse-based rotation
+	#Roll control
 	#Done in pyhsics to prevent repeating keypress delay
 	var actual_roll_distance = 0
 	if Input.is_key_pressed(KEY_Q):
@@ -70,13 +70,13 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 	var target_acceleration = Vector3.ZERO
 	var relative_acceleration = Vector3.ZERO
 	if Input.is_key_pressed(KEY_W):
-		target_acceleration.z = (-acceleration*delta) #Applying axial acceleration
+		target_acceleration.z = (-acceleration*delta) #Applying axial acceleration, compensated for time since last tick
 	if Input.is_key_pressed(KEY_S):
-		target_acceleration.z = (acceleration*delta)#Applying axial acceleration
+		target_acceleration.z = (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
 	if Input.is_key_pressed(KEY_A):
-		target_acceleration.x = (-acceleration*delta)#Applying axial acceleration
+		target_acceleration.x = (-acceleration*delta)#Applying axial acceleration, compensated for time since last tick
 	if Input.is_key_pressed(KEY_D):
-		target_acceleration.x = (acceleration*delta)#Applying axial acceleration
+		target_acceleration.x = (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
 	
 	relative_acceleration = transform.basis * target_acceleration #Rotate movement to be relative to ship's orientation
 	target_velocity = relative_acceleration + target_velocity #Apply acceleration

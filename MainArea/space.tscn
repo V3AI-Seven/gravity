@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bbcw7e4pu05ch"]
+[gd_scene load_steps=10 format=3 uid="uid://bbcw7e4pu05ch"]
 
 [ext_resource type="Script" uid="uid://dw72my3vedlan" path="res://MainArea/space.gd" id="1_naoou"]
 [ext_resource type="Script" uid="uid://clumkh3ep2s8r" path="res://MainArea/Scripts/space_ship.gd" id="2_naoou"]
@@ -15,12 +15,21 @@ size = Vector3(3, 3, 3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_7fetd"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_7fetd"]
+radius = 200.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_naoou"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_7fetd"]
+material = SubResource("StandardMaterial3D_naoou")
+
 [node name="Space" type="Node3D"]
 script = ExtResource("1_naoou")
 
 [node name="PlayerSpaceShip" type="CharacterBody3D" parent="."]
 motion_mode = 1
 script = ExtResource("2_naoou")
+metadata/gravity = 0.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerSpaceShip"]
 shape = SubResource("BoxShape3D_4yfhc")
@@ -70,12 +79,16 @@ billboard = 1
 double_sided = false
 text = "Test Point 1
 (-1,0,-3)"
+horizontal_alignment = 0
+vertical_alignment = 2
 
 [node name="Origin" type="Label3D" parent="Debug/DebugLabels"]
 billboard = 1
 double_sided = false
 text = "Origin
 (0,0,0)"
+horizontal_alignment = 0
+vertical_alignment = 2
 
 [node name="DebugObjects" type="Node3D" parent="Debug"]
 
@@ -87,3 +100,23 @@ mesh = SubResource("BoxMesh_7fetd")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, -1839)
 omni_range = 4096.0
 omni_attenuation = 0.0
+
+[node name="TestPlanet" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 384, 128, 384)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="TestPlanet"]
+mass = 300.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestPlanet/RigidBody3D"]
+shape = SubResource("SphereShape3D_7fetd")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestPlanet/RigidBody3D"]
+mesh = SubResource("SphereMesh_7fetd")
+
+[node name="Label3D" type="Label3D" parent="TestPlanet"]
+billboard = 1
+text = "Test Planet Origin
+(384,128,384)"
+font_size = 128
+horizontal_alignment = 0
+vertical_alignment = 2
