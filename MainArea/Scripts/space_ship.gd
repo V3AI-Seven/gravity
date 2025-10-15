@@ -68,9 +68,9 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 	if Input.is_key_pressed(KEY_S):
 		target_acceleration.z = (acceleration*delta)#Applying axial acceleration
 	if Input.is_key_pressed(KEY_A):
-		target_acceleration.x = (acceleration*delta)#Applying axial acceleration
-	if Input.is_key_pressed(KEY_D):
 		target_acceleration.x = (-acceleration*delta)#Applying axial acceleration
+	if Input.is_key_pressed(KEY_D):
+		target_acceleration.x = (acceleration*delta)#Applying axial acceleration
 	
 	relative_acceleration = transform.basis * target_acceleration #Rotate movement to be relative to ship's orientation
 	target_velocity = relative_acceleration + target_velocity #Apply acceleration
