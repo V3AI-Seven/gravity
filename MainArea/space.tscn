@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://bbcw7e4pu05ch"]
+[gd_scene load_steps=7 format=3 uid="uid://bbcw7e4pu05ch"]
 
+[ext_resource type="Script" uid="uid://dw72my3vedlan" path="res://MainArea/space.gd" id="1_naoou"]
 [ext_resource type="Script" uid="uid://clumkh3ep2s8r" path="res://MainArea/Scripts/space_ship.gd" id="2_naoou"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4yfhc"]
@@ -15,6 +16,7 @@ size = Vector3(3, 3, 3)
 [sub_resource type="BoxMesh" id="BoxMesh_7fetd"]
 
 [node name="Space" type="Node3D"]
+script = ExtResource("1_naoou")
 
 [node name="SpaceShip" type="Node3D" parent="."]
 
@@ -46,10 +48,17 @@ offset_bottom = 46.0
 text = "X:0 Y:0 Z:0"
 metadata/_edit_use_anchors_ = true
 
-[node name="Rotation" type="Label" parent="SpaceShip/PlayerSpaceShip/Camera3D/DebugInfo"]
+[node name="Velocity" type="Label" parent="SpaceShip/PlayerSpaceShip/Camera3D/DebugInfo"]
 offset_top = 46.0
-offset_right = 157.0
+offset_right = 78.0
 offset_bottom = 69.0
+text = "VelX:0 VelY:0 VelZ:0"
+metadata/_edit_use_anchors_ = true
+
+[node name="Rotation" type="Label" parent="SpaceShip/PlayerSpaceShip/Camera3D/DebugInfo"]
+offset_top = 69.0
+offset_right = 157.0
+offset_bottom = 92.0
 text = "RotX:0 RotY:0 RotZ:0"
 metadata/_edit_use_anchors_ = true
 
