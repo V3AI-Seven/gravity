@@ -2,10 +2,13 @@ extends CharacterBody3D
 
 const acceleration = 5 #measured in m/s
 const boost_acceleration = 15 #measured in m/s
+const natural_deceleration = 0.99995
+const natural_roll_deceleration = 0.995
 const mouse_sensitivity = 0.002
-const roll_speed = 0.02
+const roll_speed = 0.002
 
 var target_velocity = Vector3.ZERO
+var target_roll_velocity = 0
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -52,12 +55,15 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 	
 	#Roll control, TODO: also make momentum based, see mouse-based rotation
 	#Done in pyhsics to prevent repeating keypress delay
-	var target_roll_velocity = 0
+	var actual_roll_distance = 0
 	if Input.is_key_pressed(KEY_Q):
 		target_roll_velocity += roll_speed
 	if Input.is_key_pressed(KEY_E):
 		target_roll_velocity += -roll_speed
-	rotate_object_local(Vector3.FORWARD,target_roll_velocity)
+	target_roll_velocity = target_roll_velocity*natural_roll_deceleration
+	
+	actual_roll_distance = target_roll_velocity
+	rotate_object_local(Vector3.FORWARD,actual_roll_distance)
 	
 	
 	#Momentum-based spaceflight time
@@ -75,7 +81,7 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 	relative_acceleration = transform.basis * target_acceleration #Rotate movement to be relative to ship's orientation
 	target_velocity = relative_acceleration + target_velocity #Apply acceleration
 	
-	target_velocity = target_velocity * 0.995 #Natural deceleration
+	target_velocity = target_velocity * natural_deceleration #Natural deceleration
 	
 	velocity = target_velocity
 	move_and_collide(velocity*delta) #Built in function to have nice movement, velocity, and collision
