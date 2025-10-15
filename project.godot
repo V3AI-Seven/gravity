@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Gravity"
+run/main_scene="uid://bbcw7e4pu05ch"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Flags="*res://Globals/flags.gd"
 
 [dotnet]
 

@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://bbcw7e4pu05ch"]
+[gd_scene load_steps=6 format=3 uid="uid://bbcw7e4pu05ch"]
 
-[ext_resource type="Script" uid="uid://dm0x3r1n0cfug" path="res://MainArea/Scripts/space_ship.gd" id="1_aaufb"]
+[ext_resource type="Script" uid="uid://clumkh3ep2s8r" path="res://MainArea/Scripts/space_ship.gd" id="2_naoou"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4yfhc"]
 size = Vector3(3, 3, 3)
@@ -12,35 +12,71 @@ albedo_color = Color(0, 0, 0, 1)
 material = SubResource("StandardMaterial3D_aaufb")
 size = Vector3(3, 3, 3)
 
+[sub_resource type="BoxMesh" id="BoxMesh_7fetd"]
+
 [node name="Space" type="Node3D"]
 
 [node name="SpaceShip" type="Node3D" parent="."]
-script = ExtResource("1_aaufb")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="SpaceShip"]
+[node name="PlayerSpaceShip" type="CharacterBody3D" parent="SpaceShip"]
+motion_mode = 1
+script = ExtResource("2_naoou")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpaceShip/CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpaceShip/PlayerSpaceShip"]
 shape = SubResource("BoxShape3D_4yfhc")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SpaceShip/CharacterBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpaceShip/PlayerSpaceShip"]
+visible = false
 mesh = SubResource("BoxMesh_naoou")
 
-[node name="Camera3D" type="Camera3D" parent="SpaceShip/CharacterBody3D"]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 2, 0, 0)
+[node name="Camera3D" type="Camera3D" parent="SpaceShip/PlayerSpaceShip"]
 
-[node name="Speedometer" type="Label" parent="SpaceShip/CharacterBody3D/Camera3D"]
-offset_right = 40.0
+[node name="DebugInfo" type="Node3D" parent="SpaceShip/PlayerSpaceShip/Camera3D"]
+
+[node name="Speedometer" type="Label" parent="SpaceShip/PlayerSpaceShip/Camera3D/DebugInfo"]
+offset_right = 65.0
 offset_bottom = 23.0
-text = "Speed: 0"
+text = "Speed: 0m/s"
+metadata/_edit_use_anchors_ = true
 
-[node name="Position" type="Label" parent="SpaceShip/CharacterBody3D/Camera3D"]
+[node name="Position" type="Label" parent="SpaceShip/PlayerSpaceShip/Camera3D/DebugInfo"]
 offset_top = 23.0
 offset_right = 78.0
 offset_bottom = 46.0
 text = "X:0 Y:0 Z:0"
+metadata/_edit_use_anchors_ = true
 
-[node name="Rotation" type="Label" parent="SpaceShip/CharacterBody3D/Camera3D"]
+[node name="Rotation" type="Label" parent="SpaceShip/PlayerSpaceShip/Camera3D/DebugInfo"]
 offset_top = 46.0
-offset_right = 112.0
+offset_right = 157.0
 offset_bottom = 69.0
-text = "Rot X:0 Rot Y:0"
+text = "RotX:0 RotY:0 RotZ:0"
+metadata/_edit_use_anchors_ = true
+
+[node name="Debug" type="Node3D" parent="."]
+
+[node name="DebugLabels" type="Node3D" parent="Debug"]
+
+[node name="TestPoint1" type="Label3D" parent="Debug/DebugLabels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -3)
+billboard = 1
+double_sided = false
+text = "Test Point 1
+(-1,0,-3)"
+
+[node name="Origin" type="Label3D" parent="Debug/DebugLabels"]
+billboard = 1
+double_sided = false
+text = "Origin
+(0,0,0)"
+
+[node name="DebugObjects" type="Node3D" parent="Debug"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/DebugObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+mesh = SubResource("BoxMesh_7fetd")
+
+[node name="Sun" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1839)
+omni_range = 4096.0
+omni_attenuation = 0.0
