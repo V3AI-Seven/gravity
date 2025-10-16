@@ -10,6 +10,10 @@ const roll_speed = 0.002
 var target_velocity = Vector3.ZERO
 var target_roll_velocity = 0
 
+var current_cam = 1
+
+var move_disabled = false
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -22,6 +26,14 @@ func _input(event: InputEvent) -> void: #called on input events(key press, mouse
 	if event is InputEventKey:
 		if event.keycode == KEY_ESCAPE:
 			quit_menu()
+		elif event.keycode == KEY_V:
+			match current_cam:
+				1:
+					$Camera3D2.make_current()
+					current_cam = 2
+				2:
+					$Camera3D.make_current()
+					current_cam = 1
 
 
 func quit_menu() -> void: # TODO: Make proper menu in future!!!
@@ -32,22 +44,28 @@ func update_rotation_feed() -> void: #updates debug readouts
 	var rotY = snapped(rotation_degrees.y, 0.01)
 	var rotZ = snapped(rotation_degrees.z, 0.01)
 	$Camera3D/DebugInfo/Rotation.text = "RotX:"+str(rotX)+" RotY:"+str(rotY)+" RotZ:"+str(rotZ)
+	$Camera3D2/DebugInfo/Rotation.text = "RotX:"+str(rotX)+" RotY:"+str(rotY)+" RotZ:"+str(rotZ)
 
 func update_position_feed() -> void:#updates debug readouts
 	var posX = snapped(position.x, 0.1)
 	var posY = snapped(position.y, 0.1)
 	var posZ = snapped(position.z, 0.1)
 	$Camera3D/DebugInfo/Position.text = "PosX:"+str(posX)+" PosY:"+str(posY)+" PosZ:"+str(posZ)
+	$Camera3D2/DebugInfo/Position.text = "PosX:"+str(posX)+" PosY:"+str(posY)+" PosZ:"+str(posZ)
 
 func update_velocity_feed() -> void:#updates debug readouts
 	var velX = snapped(velocity.x,0.1)
 	var velY = snapped(velocity.y,0.1)
 	var velZ = snapped(velocity.z,0.1)
 	$Camera3D/DebugInfo/Velocity.text = "VelX:"+str(velX)+" VelY:"+str(velY)+" VelZ:"+str(velZ)
+	$Camera3D2/DebugInfo/Velocity.text = "VelX:"+str(velX)+" VelY:"+str(velY)+" VelZ:"+str(velZ)
 
 
 func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, not the same as rendering
 	if Flags.debug_mode == true:#Debug mode setup
+		$Camera3D/DebugInfo.visible = true
+		
+		
 		update_rotation_feed()
 		update_position_feed()
 		update_velocity_feed()
