@@ -1,17 +1,24 @@
 extends CharacterBody3D
 
+#Movement constants
 const acceleration = 5 #measured in m/s
-const boost_acceleration = 15 #measured in m/s
 const natural_deceleration = 0.99995
 const natural_roll_deceleration = 0.995
 const mouse_sensitivity = 0.002
 const roll_speed = 0.002
 
+
+#velocity variables
 var target_velocity = Vector3.ZERO
 var target_roll_velocity = 0
 
-var current_cam = 1
+#collision variables 
+var impact
+var bounces = 0
+var remaining
 
+#movement  variables
+var current_cam = 1
 var move_disabled = false
 
 func _ready() -> void:
@@ -26,15 +33,11 @@ func _input(event: InputEvent) -> void: #called on input events(key press, mouse
 	if event is InputEventKey:
 		if event.keycode == KEY_ESCAPE:
 			quit_menu()
-		elif event.keycode == KEY_V:
-			match current_cam:
-				1:
-					$Camera3D2.make_current()
-					current_cam = 2
-				2:
-					$Camera3D.make_current()
-					current_cam = 1
-
+		
+		elif event.keycode == KEY_1 and Input.is_key_pressed(KEY_V):
+			$MainCam.make_current()
+		elif event.keycode == KEY_2 and Input.is_key_pressed(KEY_V):
+			$SecondaryCam.make_current()
 
 func quit_menu() -> void: # TODO: Make proper menu in future!!!
 	get_tree().quit()
@@ -43,28 +46,28 @@ func update_rotation_feed() -> void: #updates debug readouts
 	var rotX = snapped(rotation_degrees.x, 0.01)
 	var rotY = snapped(rotation_degrees.y, 0.01)
 	var rotZ = snapped(rotation_degrees.z, 0.01)
-	$Camera3D/DebugInfo/Rotation.text = "RotX:"+str(rotX)+" RotY:"+str(rotY)+" RotZ:"+str(rotZ)
-	$Camera3D2/DebugInfo/Rotation.text = "RotX:"+str(rotX)+" RotY:"+str(rotY)+" RotZ:"+str(rotZ)
+	$MainCam/DebugInfo/Rotation.text = "RotX:"+str(rotX)+" RotY:"+str(rotY)+" RotZ:"+str(rotZ)
+	$SecondaryCam/DebugInfo/Rotation.text = "RotX:"+str(rotX)+" RotY:"+str(rotY)+" RotZ:"+str(rotZ)
 
 func update_position_feed() -> void:#updates debug readouts
 	var posX = snapped(position.x, 0.1)
 	var posY = snapped(position.y, 0.1)
 	var posZ = snapped(position.z, 0.1)
-	$Camera3D/DebugInfo/Position.text = "PosX:"+str(posX)+" PosY:"+str(posY)+" PosZ:"+str(posZ)
-	$Camera3D2/DebugInfo/Position.text = "PosX:"+str(posX)+" PosY:"+str(posY)+" PosZ:"+str(posZ)
+	$MainCam/DebugInfo/Position.text = "PosX:"+str(posX)+" PosY:"+str(posY)+" PosZ:"+str(posZ)
+	$SecondaryCam/DebugInfo/Position.text = "PosX:"+str(posX)+" PosY:"+str(posY)+" PosZ:"+str(posZ)
 
 func update_velocity_feed() -> void:#updates debug readouts
 	var velX = snapped(velocity.x,0.1)
 	var velY = snapped(velocity.y,0.1)
 	var velZ = snapped(velocity.z,0.1)
-	$Camera3D/DebugInfo/Velocity.text = "VelX:"+str(velX)+" VelY:"+str(velY)+" VelZ:"+str(velZ)
-	$Camera3D2/DebugInfo/Velocity.text = "VelX:"+str(velX)+" VelY:"+str(velY)+" VelZ:"+str(velZ)
+	$MainCam/DebugInfo/Velocity.text = "VelX:"+str(velX)+" VelY:"+str(velY)+" VelZ:"+str(velZ)
+	$SecondaryCam/DebugInfo/Velocity.text = "VelX:"+str(velX)+" VelY:"+str(velY)+" VelZ:"+str(velZ)
 
 
 func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, not the same as rendering
 	if Flags.debug_mode == true:#Debug mode setup
-		$Camera3D/DebugInfo.visible = true
-		
+		$MainCam/DebugInfo.visible = true
+		$SecondaryCam/DebugInfo.visible = true
 		
 		update_rotation_feed()
 		update_position_feed()
@@ -78,7 +81,7 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 		target_roll_velocity += roll_speed
 	if Input.is_key_pressed(KEY_E):
 		target_roll_velocity += -roll_speed
-	target_roll_velocity = target_roll_velocity*natural_roll_deceleration
+	target_roll_velocity *= natural_roll_deceleration #Natural deceleration
 	
 	actual_roll_distance = target_roll_velocity
 	rotate_object_local(Vector3.FORWARD,actual_roll_distance)
@@ -88,20 +91,34 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 	var target_acceleration = Vector3.ZERO
 	var relative_acceleration = Vector3.ZERO
 	if Input.is_key_pressed(KEY_W):
-		target_acceleration.z = (-acceleration*delta) #Applying axial acceleration, compensated for time since last tick
+		target_acceleration.z += (-acceleration*delta) #Applying axial acceleration, compensated for time since last tick
 	if Input.is_key_pressed(KEY_S):
-		target_acceleration.z = (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
+		target_acceleration.z += (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
 	if Input.is_key_pressed(KEY_A):
-		target_acceleration.x = (-acceleration*delta)#Applying axial acceleration, compensated for time since last tick
+		target_acceleration.x += (-acceleration*delta)#Applying axial acceleration, compensated for time since last tick
 	if Input.is_key_pressed(KEY_D):
-		target_acceleration.x = (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
+		target_acceleration.x += (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
+	if Input.is_key_pressed(KEY_CTRL):
+		target_acceleration.y += (-acceleration*delta)#Applying axial acceleration, compensated for time since last tick
+	if Input.is_key_pressed(KEY_SPACE):
+		target_acceleration.y += (acceleration*delta)#Applying axial acceleration, compensated for time since last tick
 	
 	relative_acceleration = transform.basis * target_acceleration #Rotate movement to be relative to ship's orientation
-	target_velocity = relative_acceleration + target_velocity #Apply acceleration
+	target_velocity += relative_acceleration #Apply acceleration
 	
-	target_velocity = target_velocity * natural_deceleration #Natural deceleration
+	target_velocity *= natural_deceleration #Natural deceleration
 	
 	velocity = target_velocity
-	move_and_collide(velocity*delta) #Built in function to have nice movement, velocity, and collision
-		
+	velocity += get_gravity() #Apply gravity
+
+	bounces = 0
+	remaining = velocity * delta
 	
+	impact = move_and_collide(remaining) #Built in function to have nice movement, velocity, and collision
+	
+	if impact != null:
+		velocity = velocity.bounce(impact.get_normal())
+		remaining = impact.get_remainder()
+		
+		impact = null
+		impact = move_and_collide(remaining)

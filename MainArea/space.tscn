@@ -1,8 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://bbcw7e4pu05ch"]
+[gd_scene load_steps=15 format=3 uid="uid://bbcw7e4pu05ch"]
 
 [ext_resource type="Script" uid="uid://dw72my3vedlan" path="res://MainArea/space.gd" id="1_naoou"]
 [ext_resource type="Script" uid="uid://clumkh3ep2s8r" path="res://MainArea/Scripts/space_ship.gd" id="2_naoou"]
-[ext_resource type="Script" uid="uid://b0wcqw8spuwqd" path="res://MainArea/Scripts/test_planet.gd" id="3_7fetd"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_naoou"]
+height = 8192.0
+radius = 8192.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4yfhc"]
 size = Vector3(3, 3, 3)
@@ -14,7 +17,17 @@ albedo_color = Color(0, 0, 0, 1)
 material = SubResource("StandardMaterial3D_aaufb")
 size = Vector3(3, 3, 3)
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7fetd"]
+bounce = 1.0
+
 [sub_resource type="BoxMesh" id="BoxMesh_7fetd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x2dfo"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_naoou"]
+resource_name = "StandardPlanetBounce"
+friction = 0.45
+bounce = 1.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_7fetd"]
 radius = 200.0
@@ -27,13 +40,22 @@ radius = 200.0
 height = 400.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_x2dfo"]
-radius = 600.0
+radius = 330.0
 
 [node name="Space" type="Node3D"]
 script = ExtResource("1_naoou")
 
+[node name="SpaceGravityField" type="Area3D" parent="."]
+collision_priority = 0.1
+gravity_space_override = 3
+gravity = 0.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpaceGravityField"]
+shape = SubResource("CylinderShape3D_naoou")
+
 [node name="PlayerSpaceShip" type="CharacterBody3D" parent="."]
 motion_mode = 1
+wall_min_slide_angle = 0.715585
 script = ExtResource("2_naoou")
 metadata/gravity = 0.0
 
@@ -43,66 +65,66 @@ shape = SubResource("BoxShape3D_4yfhc")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PlayerSpaceShip"]
 mesh = SubResource("BoxMesh_naoou")
 
-[node name="Camera3D" type="Camera3D" parent="PlayerSpaceShip"]
+[node name="MainCam" type="Camera3D" parent="PlayerSpaceShip"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="DebugInfo" type="Node3D" parent="PlayerSpaceShip/Camera3D"]
+[node name="DebugInfo" type="Node3D" parent="PlayerSpaceShip/MainCam"]
 visible = false
 
-[node name="Speedometer" type="Label" parent="PlayerSpaceShip/Camera3D/DebugInfo"]
+[node name="Speedometer" type="Label" parent="PlayerSpaceShip/MainCam/DebugInfo"]
 offset_right = 65.0
 offset_bottom = 23.0
 text = "Speed: 0m/s"
 metadata/_edit_use_anchors_ = true
 
-[node name="Position" type="Label" parent="PlayerSpaceShip/Camera3D/DebugInfo"]
+[node name="Position" type="Label" parent="PlayerSpaceShip/MainCam/DebugInfo"]
 offset_top = 23.0
 offset_right = 78.0
 offset_bottom = 46.0
 text = "X:0 Y:0 Z:0"
 metadata/_edit_use_anchors_ = true
 
-[node name="Velocity" type="Label" parent="PlayerSpaceShip/Camera3D/DebugInfo"]
+[node name="Velocity" type="Label" parent="PlayerSpaceShip/MainCam/DebugInfo"]
 offset_top = 46.0
 offset_right = 78.0
 offset_bottom = 69.0
 text = "VelX:0 VelY:0 VelZ:0"
 metadata/_edit_use_anchors_ = true
 
-[node name="Rotation" type="Label" parent="PlayerSpaceShip/Camera3D/DebugInfo"]
+[node name="Rotation" type="Label" parent="PlayerSpaceShip/MainCam/DebugInfo"]
 offset_top = 69.0
 offset_right = 157.0
 offset_bottom = 92.0
 text = "RotX:0 RotY:0 RotZ:0"
 metadata/_edit_use_anchors_ = true
 
-[node name="Camera3D2" type="Camera3D" parent="PlayerSpaceShip"]
+[node name="SecondaryCam" type="Camera3D" parent="PlayerSpaceShip"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 5)
 
-[node name="DebugInfo" type="Node3D" parent="PlayerSpaceShip/Camera3D2"]
+[node name="DebugInfo" type="Node3D" parent="PlayerSpaceShip/SecondaryCam"]
 visible = false
 
-[node name="Speedometer" type="Label" parent="PlayerSpaceShip/Camera3D2/DebugInfo"]
+[node name="Speedometer" type="Label" parent="PlayerSpaceShip/SecondaryCam/DebugInfo"]
 offset_right = 65.0
 offset_bottom = 23.0
 text = "Speed: 0m/s"
 metadata/_edit_use_anchors_ = true
 
-[node name="Position" type="Label" parent="PlayerSpaceShip/Camera3D2/DebugInfo"]
+[node name="Position" type="Label" parent="PlayerSpaceShip/SecondaryCam/DebugInfo"]
 offset_top = 23.0
 offset_right = 78.0
 offset_bottom = 46.0
 text = "X:0 Y:0 Z:0"
 metadata/_edit_use_anchors_ = true
 
-[node name="Velocity" type="Label" parent="PlayerSpaceShip/Camera3D2/DebugInfo"]
+[node name="Velocity" type="Label" parent="PlayerSpaceShip/SecondaryCam/DebugInfo"]
 offset_top = 46.0
 offset_right = 78.0
 offset_bottom = 69.0
 text = "VelX:0 VelY:0 VelZ:0"
 metadata/_edit_use_anchors_ = true
 
-[node name="Rotation" type="Label" parent="PlayerSpaceShip/Camera3D2/DebugInfo"]
+[node name="Rotation" type="Label" parent="PlayerSpaceShip/SecondaryCam/DebugInfo"]
 offset_top = 69.0
 offset_right = 157.0
 offset_bottom = 92.0
@@ -132,9 +154,17 @@ vertical_alignment = 2
 
 [node name="DebugObjects" type="Node3D" parent="Debug"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/DebugObjects"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+[node name="Debug1" type="RigidBody3D" parent="Debug/DebugObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+physics_material_override = SubResource("PhysicsMaterial_7fetd")
+gravity_scale = 0.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/DebugObjects/Debug1"]
 mesh = SubResource("BoxMesh_7fetd")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Debug/DebugObjects/Debug1"]
+shape = SubResource("BoxShape3D_x2dfo")
 
 [node name="Sun" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, -1839)
@@ -143,9 +173,12 @@ omni_attenuation = 0.0
 
 [node name="TestPlanet" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 384, 128, 384)
-mass = 300.0
+mass = 20000.0
+physics_material_override = SubResource("PhysicsMaterial_naoou")
 gravity_scale = 0.0
-script = ExtResource("3_7fetd")
+continuous_cd = true
+linear_damp_mode = 1
+linear_damp = 100.0
 metadata/GravityRange = 350.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TestPlanet"]
@@ -160,9 +193,7 @@ gravity_point = true
 gravity_point_unit_distance = 200.0
 gravity_point_center = Vector3(0, 0, 0)
 gravity_direction = Vector3(0, 0, 0)
-gravity = 102.78
+gravity = 3.2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TestPlanet/GravityEffectArea"]
 shape = SubResource("SphereShape3D_x2dfo")
-
-[connection signal="body_shape_entered" from="TestPlanet/GravityEffectArea" to="TestPlanet" method="player_gravity"]
