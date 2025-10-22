@@ -1,7 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://bbcw7e4pu05ch"]
+[gd_scene load_steps=16 format=3 uid="uid://bbcw7e4pu05ch"]
 
 [ext_resource type="Script" uid="uid://dw72my3vedlan" path="res://MainArea/space.gd" id="1_naoou"]
 [ext_resource type="Script" uid="uid://clumkh3ep2s8r" path="res://MainArea/Scripts/space_ship.gd" id="2_naoou"]
+[ext_resource type="Script" uid="uid://c0kwrahq1ertb" path="res://MainArea/test_planet.gd" id="3_7fetd"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_naoou"]
 height = 8192.0
@@ -27,7 +28,7 @@ bounce = 1.0
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_naoou"]
 resource_name = "StandardPlanetBounce"
 friction = 0.45
-bounce = 1.0
+bounce = 0.1
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_7fetd"]
 radius = 200.0
@@ -173,12 +174,13 @@ omni_attenuation = 0.0
 
 [node name="TestPlanet" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 384, 128, 384)
-mass = 20000.0
+mass = 200000000.0
 physics_material_override = SubResource("PhysicsMaterial_naoou")
 gravity_scale = 0.0
 continuous_cd = true
 linear_damp_mode = 1
 linear_damp = 100.0
+script = ExtResource("3_7fetd")
 metadata/GravityRange = 350.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TestPlanet"]

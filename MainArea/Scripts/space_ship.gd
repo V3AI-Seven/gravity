@@ -109,16 +109,21 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 	target_velocity *= natural_deceleration #Natural deceleration
 	
 	velocity = target_velocity
-	velocity += get_gravity() #Apply gravity
+	velocity += get_gravity() * delta #Apply gravity
 
-	bounces = 0
-	remaining = velocity * delta
 	
-	impact = move_and_collide(remaining) #Built in function to have nice movement, velocity, and collision
+	impact = move_and_collide(velocity*delta) #Built in function to have nice movement, velocity, and collision
 	
 	if impact != null:
-		velocity = velocity.bounce(impact.get_normal())
-		remaining = impact.get_remainder()
+		var collider = impact.get_collider()
+		var bounce = collider.physics_material_override.bounce
+		
+		var impact_normal = impact.get_normal()
+		impact_normal *= bounce
+		impact_normal = impact_normal.normalized()
+				
+		velocity = velocity.bounce(impact_normal)
+		target_velocity = velocity
 		
 		impact = null
-		impact = move_and_collide(remaining)
+		impact = move_and_collide(velocity*delta)
