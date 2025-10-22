@@ -119,10 +119,11 @@ func _physics_process(delta: float) -> void: #Runs on pyhsics processing ticks, 
 		var bounce = collider.physics_material_override.bounce
 		
 		var impact_normal = impact.get_normal()
-		impact_normal *= bounce
-		impact_normal = impact_normal.normalized()
+		#impact_normal *= bounce
+		#impact_normal = impact_normal.normalized()
 				
 		velocity = velocity.bounce(impact_normal)
+		velocity *= bounce
 		target_velocity = velocity
 		
 		impact = null
